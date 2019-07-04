@@ -85,9 +85,9 @@ String maxRead()
       while (i < length)
       {
         // charArray[i] = Serial1.read(); // assign input char to charArray index
-        reading += (Serial1.read() - '0'); // assign input char to reading string
+        reading += (Serial1.read() - '0'); // convert ASCII to single numeral, add to range reading
                                            // Serial.print("char: ");        // debug
-        Serial.print("reading: ");         // debug
+        Serial.print("reading: ");         // Display data accumulation
                                            // Serial.println(charArray[i]);
         Serial.println(reading);
         i++;
