@@ -1,3 +1,9 @@
+/******************************************************/
+//       THIS IS A GENERATED FILE - DO NOT EDIT       //
+/******************************************************/
+
+#include "application.h"
+#line 1 "/Users/raventt/MBP_Projects/arduino/maxPhoton5Mqtt/src/maxPhoton5Mqtt.ino"
 /*
  * Project maxPhoton5Mqtt
  * Description: Interface Maxbotix serial sensor to Particle Photon or Arduino compatible
@@ -14,9 +20,14 @@
 
 #include "MQTT.h"
 
-byte server1[] = {192, 168, 0, 103};
+void callback(char* topic, byte* payload, unsigned int length);
+void setup();
+void loop();
+String maxRead();
+#line 17 "/Users/raventt/MBP_Projects/arduino/maxPhoton5Mqtt/src/maxPhoton5Mqtt.ino"
+byte server1[] = {192,168,0,103};
 
-void callback(char *topic, byte *payload, unsigned int length) {}
+void callback(char* topic, byte* payload, unsigned int length){}
 
 /**
  * if want to use IP address,
@@ -43,22 +54,17 @@ void setup()
   }
   Serial.println("Sensor connected");
   client.connect("maxphoton5");
-  if (client.isConnected) {
-    Serial.println("Connected to broker");
-  } else {
-    Serial.println("Failed to connect to broker");
-  }
+
 }
 
 void loop()
 {
   // uint16_t range = maxRead();
-  String range = maxRead();
+    String range = maxRead();
   Serial.print("Distance: ");
   Serial.println(range);
   String payload = range;
-  if (client.isConnected())
-  {
+  if (client.isConnected()) {
     client.publish("distance", payload);
   }
   Serial.print("Int range: ");
@@ -68,32 +74,28 @@ void loop()
 }
 
 // uint16_t maxRead() {
-String maxRead()
-{                           // get a data string back from reading sensor
-  char inChar;              // type for data read
-  const uint8_t length = 3; // number of ascii numeric characters in sensor data
-  // char charArray[length];       // array to store range data
-  String reading = ""; // empty string to add data
-  uint8_t i = 0;       // initialize counter
+  String maxRead() {             // get a data string back from reading sensor
+char inChar;                     // type for data read
+const uint8_t length = 3;        // number of ascii numeric characters in sensor data
+// char charArray[length];       // array to store range data
+String reading = "";             // empty string to add data
+uint8_t i = 0;                   // initialize counter
 
-  while (Serial1.available())
-  {
-    inChar = Serial1.read(); // continuously read sensor input in while loop
-    if (inChar == 'R')
-    { // test if char == R for beginning data
-      // Serial.println("Got an R");  // Debug
-      while (i < length)
-      {
+  while (Serial1.available()) {
+    inChar = Serial1.read();        // continuously read sensor input in while loop
+    if (inChar == 'R') {            // test if char == R for beginning data
+    // Serial.println("Got an R");  // Debug
+      while (i < length) {
         // charArray[i] = Serial1.read(); // assign input char to charArray index
-        reading += (Serial1.read() - '0'); // assign input char to reading string
-                                           // Serial.print("char: ");        // debug
-        Serial.print("reading: ");         // debug
-                                           // Serial.println(charArray[i]);
-        Serial.println(reading);
+                reading += (Serial1.read() - '0'); // assign input char to reading string
+        // Serial.print("char: ");        // debug
+                Serial.print("reading: ");        // debug
+        // Serial.println(charArray[i]);
+            Serial.println(reading);
         i++;
       }
     }
   }
   // return atoi(charArray);            // extract integer range from char charArray
-  return reading; // return range reading as a string
+    return reading;            // return range reading as a string
 }

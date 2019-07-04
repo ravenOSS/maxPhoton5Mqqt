@@ -3,5 +3,8 @@
     "C_Cpp.default.configurationProvider": "particle.particle-vscode-core",
     "files.associations": {
         "*.ino": "cpp"
-    }
+    },
+    "particle.targetDevice": "ravenPhoton05_19",
+    "particle.firmwareVersion": "1.0.1-rc.1",
+    "particle.targetPlatform": "photon"
 }
