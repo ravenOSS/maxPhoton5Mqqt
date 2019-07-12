@@ -12,24 +12,29 @@
 // Using hardware UART on Photon, Electron, Fio
 // Maxbotix sensor with RS232 conversion to TTL with MAX3232
 
-#include "MQTT.h"
+#include "MQTT.h"  // Ensure library is added to project not just included
+
+/**
+ * To use IP address,
+ * byte server[] = { XXX,XXX,XXX,XXX };
+ * MQTT client(server, 1883, callback);
+ * To use domain name,
+ * MQTT client("mqtt.eclipse.org", 1883, callback);
+ **/
 
 byte server1[] = {192, 168, 0, 103};
 
 void callback(char *topic, byte *payload, unsigned int length) {}
 
-/**
- * if want to use IP address,
- * byte server[] = { XXX,XXX,XXX,XXX };
- * MQTT client(server, 1883, callback);
- * want to use domain name,
- * MQTT client("www.sample.com", 1883, callback);
- **/
+String clientID = "maxPhoton5";
+
 MQTT client(server1, 1883, callback);
+
+// int alertLED = D7;
 
 void setup()
 {
-  Serial.begin(57600);
+  Serial.begin(57600); // Serial monitor
   while (!Serial)
   {
     ; // wait for serial port to connect.
@@ -42,24 +47,50 @@ void setup()
     ; // wait for Serial1 port to connect.
   }
   Serial.println("Sensor connected");
-  client.connect("maxphoton5");
-  if (client.isConnected) {
+  mqttconnect();
+  // client.connect(clientID);
+  // if (client.isConnected()) {
+  //   Serial.println("Connected to broker");
+  // } else {
+  //   Serial.println("Failed to connect to broker");
+  //   alert();
+  // }
+  // pinMode(alertLED, OUTPUT);
+}
+
+void mqttconnect () {
+client.connect(clientID);
+  if (client.isConnected()) {
     Serial.println("Connected to broker");
   } else {
     Serial.println("Failed to connect to broker");
+    alert();
   }
 }
 
+void alert () {
+    uint16_t blinks = 10;
+    uint16_t i;
+    RGB.control(true);
+    for ( i = 0; i <= blinks; i++ ) {
+    RGB.color(255, 0, 0);     // Set the RGB LED to red
+    delay(1000);              // Keep it on for 1 second...
+    RGB.color(255, 255, 255); // Sets the RGB LED to white
+    delay(500);               // Wait 0.5 second...
+    }
+    RGB.control(false);
+
+}
+
+
 void loop()
 {
-  // uint16_t range = maxRead();
   String range = maxRead();
   Serial.print("Distance: ");
   Serial.println(range);
-  String payload = range;
   if (client.isConnected())
   {
-    client.publish("distance", payload);
+    client.publish("distance", range);
   }
   Serial.print("Int range: ");
   Serial.println((range).toInt());
@@ -71,7 +102,7 @@ void loop()
 String maxRead()
 {                           // get a data string back from reading sensor
   char inChar;              // type for data read
-  const uint8_t length = 3; // number of ascii numeric characters in sensor data
+  const uint8_t length = 3; // number of ascii numeric characters in sensor data. Adjust for sensor type
   // char charArray[length];       // array to store range data
   String reading = ""; // empty string to add data
   uint8_t i = 0;       // initialize counter
@@ -85,7 +116,7 @@ String maxRead()
       while (i < length)
       {
         // charArray[i] = Serial1.read(); // assign input char to charArray index
-        reading += (Serial1.read() - '0'); // convert ASCII to single numeral, add to range reading
+        reading += (Serial1.read() - '0'); // convert ASCII DEC to single numeral, add to range reading
                                            // Serial.print("char: ");        // debug
         Serial.print("reading: ");         // Display data accumulation
                                            // Serial.println(charArray[i]);
